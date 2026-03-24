@@ -1,17 +1,20 @@
 import { Chat } from "chat";
-import { MemoryStateAdapter } from "@chat-adapter/state-memory";
 import { createKapsoAdapter } from "@luicho/kapso-chat-sdk";
 import { getMovieDetails } from "./tmdb";
 import { formatDetails } from "./format";
 import { welcomeCard, detailsCard } from "./cards";
 import { handleCommand, HELP_TEXT } from "./commands";
+import { createRedisState } from "@chat-adapter/state-redis";
 
 export const bot = new Chat({
   userName: "Flick Bot",
   adapters: {
     kapso: createKapsoAdapter(),
   },
-  state: new MemoryStateAdapter(),
+  // Use MemoryStateAdapter for local dev without Redis:
+  //   import { MemoryStateAdapter } from "@chat-adapter/state-memory";
+  //   state: new MemoryStateAdapter(),
+  state: createRedisState(),
 });
 
 bot.onDirectMessage(async (thread, message) => {

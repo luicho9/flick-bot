@@ -1,6 +1,10 @@
 # Flick Bot
 
-A WhatsApp movie bot built with [Chat SDK](https://chat-sdk.vercel.app), the [Kapso Chat SDK](https://github.com/luicho9/kapso-chat-sdk) community adapter, and the [TMDB API](https://www.themoviedb.org/).
+Ever been in the mood for a movie but can't decide what to watch? Or found a film you loved and wanted something similar? Flick Bot is a WhatsApp companion that helps you search, discover, and compare movies, all without leaving the chat.
+
+> The name "flick" comes from the early days of cinema. Low frame rates made the projected image *flicker*, so people started calling movies "flickers" and eventually just *flicks*.
+
+Built with [Chat SDK](https://chat-sdk.vercel.app), the [Kapso Chat SDK](https://github.com/luicho9/kapso-chat-sdk) community adapter, and the [TMDB API](https://www.themoviedb.org/).
 
 ## Commands
 
@@ -35,6 +39,7 @@ cp .env.example .env
 | `KAPSO_API_KEY`         | [Kapso Dashboard](https://kapso.ai)                            |
 | `KAPSO_PHONE_NUMBER_ID` | Kapso Dashboard → Connected numbers                            |
 | `KAPSO_WEBHOOK_SECRET`  | Kapso Dashboard → Webhooks                                     |
+| `REDIS_URL`             | Default: `redis://localhost:6379`. Use [Upstash](https://upstash.com) for serverless. |
 
 ### 3. Run the dev server
 
