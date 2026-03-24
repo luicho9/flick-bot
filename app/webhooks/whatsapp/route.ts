@@ -1,5 +1,8 @@
+import { after } from "next/server";
 import { bot } from "@/lib/bot";
 
 export async function POST(request: Request) {
-  return bot.webhooks.kapso(request);
+  return bot.webhooks.kapso(request, {
+    waitUntil: (p) => after(() => p),
+  });
 }
