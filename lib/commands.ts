@@ -12,8 +12,7 @@ export type PostFn = (
   msg: string | PostableMessage | ChatElement,
 ) => Promise<unknown>;
 
-export const HELP_TEXT = `
-🎬 Here's what I can do:
+export const HELP_TEXT = `🎬 Here's what I can do:
 
 🔍 */search <title>* — Search for a movie
 🔥 */trending* — See what's trending this week
