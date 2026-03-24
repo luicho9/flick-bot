@@ -6,6 +6,11 @@ Ever been in the mood for a movie but can't decide what to watch? Or found a fil
 
 Built with [Chat SDK](https://chat-sdk.vercel.app), the [Kapso Chat SDK](https://github.com/luicho9/kapso-chat-sdk) community adapter, and the [TMDB API](https://www.themoviedb.org/).
 
+<p>
+  <img src="public/screenshots/flickbot-1.jpg" width="300" alt="Welcome flow" />
+  <img src="public/screenshots/flickbot-2.jpg" width="300" alt="Trending results" />
+</p>
+
 ## Commands
 
 | Command           | Description                            |
