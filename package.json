@@ -10,6 +10,7 @@
     "format": "biome format --write"
   },
   "dependencies": {
+    "@chat-adapter/state-memory": "^4.21.0",
     "@chat-adapter/state-redis": "^4.21.0",
     "@luicho/kapso-chat-sdk": "^0.1.0",
     "chat": "^4.21.0",
