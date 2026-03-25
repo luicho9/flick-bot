@@ -76,3 +76,16 @@ export async function getTrending(): Promise<MovieResult[]> {
   );
   return data.results.slice(0, 5);
 }
+
+export async function discoverMovies(year: number): Promise<MovieResult[]> {
+  const params = new URLSearchParams({
+    primary_release_year: String(year),
+    sort_by: "vote_average.desc",
+    "vote_count.gte": "200",
+    include_adult: "false",
+  });
+  const data = await tmdbGet<{ results: MovieResult[] }>(
+    `/discover/movie?${params}`,
+  );
+  return data.results.slice(0, 5);
+}

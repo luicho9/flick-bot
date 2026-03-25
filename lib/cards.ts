@@ -12,7 +12,7 @@ export function welcomeCard() {
     children: [
       Actions([
         Button({ id: "cmd", value: "/trending", label: "🔥 Trending" }),
-        Button({ id: "cmd", value: "/help_search", label: "🔍 Search" }),
+        Button({ id: "cmd", value: "/best 2025", label: "🏆 Best of 2025" }),
         Button({ id: "cmd", value: "/help", label: "❓ Help" }),
       ]),
     ],

@@ -4,6 +4,7 @@ import {
   getMovieDetails,
   getRecommendations,
   getTrending,
+  discoverMovies,
 } from "./tmdb";
 import { getOmdbRatings } from "./omdb";
 import { formatMovieList, formatDetails } from "./format";
@@ -17,6 +18,7 @@ export const HELP_TEXT = `🎬 Here's what I can do:
 
 🔍 */search <title>* — Search for a movie
 🔥 */trending* — See what's trending this week
+🏆 */best <year>* — Top rated movies from a year
 📖 */details <id>* — Get full movie details
 🎯 */recommend <id>* — Get similar movies
 ❓ */help* — Show this message
@@ -101,6 +103,22 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
     } catch {
       await post("Movie not found. Check the ID and try again.");
     }
+    return;
+  }
+
+  const bestMatch = trimmed.match(/^\/best\s+(\d{4})$/i);
+  if (bestMatch) {
+    const year = Number(bestMatch[1]);
+    const movies = await discoverMovies(year);
+    if (movies.length === 0) {
+      await post(`No top-rated movies found for ${year}.`);
+      return;
+    }
+    await post(`🏆 *Best of ${year}*\n\n${formatMovieList(movies)}`);
+    await post({
+      card: resultsCard(movies),
+      fallbackText: "Tap a movie for details",
+    });
     return;
   }
 
