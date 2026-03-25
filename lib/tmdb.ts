@@ -70,6 +70,36 @@ export async function getRecommendations(id: number): Promise<MovieResult[]> {
   return data.results.slice(0, 5);
 }
 
+interface WatchProvider {
+  provider_name: string;
+}
+
+interface WatchRegion {
+  flatrate?: WatchProvider[];
+  rent?: WatchProvider[];
+  buy?: WatchProvider[];
+}
+
+export interface WatchProviders {
+  stream: string[];
+}
+
+export async function getWatchProviders(
+  id: number,
+  region = "US",
+): Promise<WatchProviders> {
+  const data = await tmdbGet<{ results: Record<string, WatchRegion> }>(
+    `/movie/${id}/watch/providers`,
+  );
+  const providers = data.results[region];
+  if (!providers) {
+    return { stream: [] };
+  }
+  return {
+    stream: providers.flatrate?.map((p) => p.provider_name) ?? [],
+  };
+}
+
 export async function getTrending(): Promise<MovieResult[]> {
   const data = await tmdbGet<{ results: MovieResult[] }>(
     "/trending/movie/week",

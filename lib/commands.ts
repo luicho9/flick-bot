@@ -4,6 +4,7 @@ import {
   getMovieDetails,
   getRecommendations,
   getTrending,
+  getWatchProviders,
   discoverMovies,
   resolveGenre,
   GENRE_NAMES,
@@ -75,10 +76,13 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
   if (detailsMatch) {
     try {
       const movie = await getMovieDetails(Number(detailsMatch[1]));
-      const omdb = movie.external_ids?.imdb_id
-        ? await getOmdbRatings(movie.external_ids.imdb_id)
-        : null;
-      await post(formatDetails(movie, omdb));
+      const [omdb, wp] = await Promise.all([
+        movie.external_ids?.imdb_id
+          ? getOmdbRatings(movie.external_ids.imdb_id)
+          : null,
+        getWatchProviders(movie.id),
+      ]);
+      await post(formatDetails(movie, omdb, wp));
       await post({ card: detailsCard(movie.id), fallbackText: "What next?" });
     } catch {
       await post("Movie not found. Check the ID and try again.");

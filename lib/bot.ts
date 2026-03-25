@@ -1,6 +1,6 @@
 import { Chat } from "chat";
 import { createKapsoAdapter } from "@luicho/kapso-chat-sdk";
-import { getMovieDetails } from "./tmdb";
+import { getMovieDetails, getWatchProviders } from "./tmdb";
 import { getOmdbRatings } from "./omdb";
 import { formatDetails } from "./format";
 import { welcomeCard, detailsCard } from "./cards";
@@ -56,10 +56,13 @@ bot.onAction("movie", async (event) => {
   }
   try {
     const movie = await getMovieDetails(movieId);
-    const omdb = movie.external_ids?.imdb_id
-      ? await getOmdbRatings(movie.external_ids.imdb_id)
-      : null;
-    await event.thread.post(formatDetails(movie, omdb));
+    const [omdb, wp] = await Promise.all([
+      movie.external_ids?.imdb_id
+        ? getOmdbRatings(movie.external_ids.imdb_id)
+        : null,
+      getWatchProviders(movie.id),
+    ]);
+    await event.thread.post(formatDetails(movie, omdb, wp));
     await event.thread.post({
       card: detailsCard(movie.id),
       fallbackText: "What next?",

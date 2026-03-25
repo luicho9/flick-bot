@@ -1,4 +1,4 @@
-import type { MovieResult, MovieDetails } from "./tmdb";
+import type { MovieResult, MovieDetails, WatchProviders } from "./tmdb";
 import type { OmdbRatings } from "./omdb";
 
 export function stars(rating: number): string {
@@ -16,12 +16,27 @@ function formatRatings(
 ): string {
   if (omdb) {
     const parts: string[] = [];
-    if (omdb.rottenTomatoes) parts.push(`🍅 ${omdb.rottenTomatoes}`);
-    if (omdb.imdb) parts.push(`IMDb ${omdb.imdb}`);
-    if (omdb.metascore) parts.push(`Metacritic ${omdb.metascore}`);
-    if (parts.length > 0) return parts.join(" · ");
+    if (omdb.rottenTomatoes) {
+      parts.push(`🍅 ${omdb.rottenTomatoes}`);
+    }
+    if (omdb.imdb) {
+      parts.push(`IMDb ${omdb.imdb}`);
+    }
+    if (omdb.metascore) {
+      parts.push(`Metacritic ${omdb.metascore}`);
+    }
+    if (parts.length > 0) {
+      return parts.join(" · ");
+    }
   }
   return `${stars(tmdbRating)} (${tmdbVotes.toLocaleString()} votes)`;
+}
+
+function formatWatchProviders(wp: WatchProviders | null): string {
+  if (!wp || wp.stream.length === 0) {
+    return "";
+  }
+  return `\n\n📺 Stream: ${wp.stream.join(", ")}`;
 }
 
 export function formatMovieList(movies: MovieResult[]): string {
@@ -41,6 +56,7 @@ export function formatMovieList(movies: MovieResult[]): string {
 export function formatDetails(
   m: MovieDetails,
   omdb: OmdbRatings | null,
+  wp: WatchProviders | null,
 ): string {
   const genres = m.genres.map((g) => g.name).join(", ");
   const director = m.credits?.crew.find((c) => c.job === "Director")?.name;
@@ -65,5 +81,7 @@ export function formatDetails(
     text += `\n🌟 Cast: ${cast}`;
   }
   text += `\n\n${m.overview}`;
+  text += formatWatchProviders(wp);
   return text;
 }
+
