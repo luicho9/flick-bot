@@ -19,28 +19,28 @@ export default function Home() {
           <div className="grid gap-4 sm:grid-cols-2">
             {[
               {
-                cmd: "/search <title>",
-                desc: "Search for any movie by title",
+                cmd: "search <title>",
+                desc: "Find a movie by title",
               },
               {
-                cmd: "/trending",
-                desc: "See what's trending this week",
+                cmd: "trending",
+                desc: "What's hot this week",
               },
               {
-                cmd: "/best <year>",
+                cmd: "best <year>",
                 desc: "Top rated movies from a year",
               },
               {
-                cmd: "/genre <name>",
+                cmd: "genre <name>",
                 desc: "Browse by genre or sub-genre",
               },
               {
-                cmd: "/details <id>",
-                desc: "Full details, ratings, and streaming",
+                cmd: "details <id>",
+                desc: "Full info, ratings, and streaming",
               },
               {
-                cmd: "/recommend <id>",
-                desc: "Get similar movie recommendations",
+                cmd: "recommend <id>",
+                desc: "Similar movie recommendations",
               },
             ].map((item) => (
               <div

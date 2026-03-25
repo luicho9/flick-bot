@@ -22,13 +22,13 @@ bot.onDirectMessage(async (thread, message) => {
   await thread.subscribe();
   const text = message.text?.trim() ?? "";
 
-  if (text && /^\//.test(text)) {
+  if (text) {
     await handleCommand(text, (msg) => thread.post(msg));
     return;
   }
 
   await thread.post(
-    `👋 Hey there! I'm *Flick Bot*, your movie companion on WhatsApp.\n\n${HELP_TEXT}`,
+    `Hey! 👋 I'm *Flick Bot*, your movie companion.\n\n${HELP_TEXT}`,
   );
   await thread.post({ card: welcomeCard(), fallbackText: "Choose an option" });
 });

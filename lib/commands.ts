@@ -17,34 +17,33 @@ export type PostFn = (
   msg: string | PostableMessage | ChatElement,
 ) => Promise<unknown>;
 
-export const HELP_TEXT = `🎬 Here's what I can do:
+export const HELP_TEXT = `Here's what I can do:
 
-🔍 */search <title>* — Search for a movie
-🔥 */trending* — See what's trending this week
-🏆 */best <year>* — Top rated movies from a year
-🎭 */genre <name>* — Browse by genre or sub-genre
-📖 */details <id>* — Get full movie details
-🎯 */recommend <id>* — Get similar movies
-❓ */help* — Show this message
+*search* _title_ - Find a movie
+*trending* - What's hot this week
+*best* _year_ - Top rated movies from a year
+*genre* _name_ - Browse by genre (rom-com, action, etc.)
+*details* _id_ - Full info, ratings & streaming
+*recommend* _id_ - Similar movies
 
-Try it! Send */search Inception* to get started.`;
+Just type naturally, no need for slashes!`;
 
 export async function handleCommand(text: string, post: PostFn): Promise<void> {
   const trimmed = text.trim();
 
-  if (/^\/help$/i.test(trimmed)) {
+  if (/^\/?help$/i.test(trimmed)) {
     await post(HELP_TEXT);
     return;
   }
 
-  if (/^\/help_search$/i.test(trimmed)) {
+  if (/^\/?help_search$/i.test(trimmed)) {
     await post(
-      "🔍 To search, send:\n*/search <movie title>*\n\nExample: */search Inception*",
+      "To search, just type:\n*search inception*",
     );
     return;
   }
 
-  if (/^\/trending$/i.test(trimmed)) {
+  if (/^\/?trending$/i.test(trimmed)) {
     const movies = await getTrending();
     await post(`🔥 *Trending This Week*\n\n${formatMovieList(movies)}`);
     if (movies.length > 0) {
@@ -56,7 +55,7 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
     return;
   }
 
-  const searchMatch = trimmed.match(/^\/search\s+(.+)$/i);
+  const searchMatch = trimmed.match(/^\/?search\s+(.+)$/i);
   if (searchMatch) {
     const query = searchMatch[1];
     const movies = await searchMovies(query);
@@ -72,7 +71,7 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
     return;
   }
 
-  const detailsMatch = trimmed.match(/^\/details\s+(\d+)$/i);
+  const detailsMatch = trimmed.match(/^\/?details\s+(\d+)$/i);
   if (detailsMatch) {
     try {
       const movie = await getMovieDetails(Number(detailsMatch[1]));
@@ -90,7 +89,7 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
     return;
   }
 
-  const recommendMatch = trimmed.match(/^\/recommend\s+(\d+)$/i);
+  const recommendMatch = trimmed.match(/^\/?recommend\s+(\d+)$/i);
   if (recommendMatch) {
     try {
       const id = Number(recommendMatch[1]);
@@ -113,7 +112,7 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
     return;
   }
 
-  const bestMatch = trimmed.match(/^\/best\s+(\d{4})$/i);
+  const bestMatch = trimmed.match(/^\/?best\s+(\d{4})$/i);
   if (bestMatch) {
     const year = Number(bestMatch[1]);
     const movies = await discoverMovies({ year });
@@ -129,13 +128,13 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
     return;
   }
 
-  const genreMatch = trimmed.match(/^\/genre(?:\s+(.+))?$/i);
+  const genreMatch = trimmed.match(/^\/?genre(?:\s+(.+))?$/i);
   if (genreMatch) {
     const args = genreMatch[1]?.trim();
 
     if (!args) {
       await post(
-        `🎭 *Available Genres*\n\n${GENRE_NAMES.join(", ")}\n\n*Sub-genres:* rom-com, heist, slasher, zombie, superhero\n\nUse */genre name* or */genre name year*`,
+        `🎭 *Available Genres*\n\n${GENRE_NAMES.join(", ")}\n\n*Sub-genres:* rom-com, heist, slasher, zombie, superhero\n\nUse *genre name* or *genre name year*`,
       );
       await post({ card: genreCard(), fallbackText: "Pick a genre" });
       return;
@@ -150,7 +149,7 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
     const match = resolveGenre(genreName);
     if (!match) {
       await post(
-        `Unknown genre "${genreName}". Try */genre* for options.`,
+        `Unknown genre "${genreName}". Try *genre* for options.`,
       );
       return;
     }
@@ -180,6 +179,7 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
   }
 
   await post(
-    `Try */help* for commands.`,
+    `Not sure what you mean. Try *help* for commands, or *search* followed by a movie title!`,
   );
 }
+
