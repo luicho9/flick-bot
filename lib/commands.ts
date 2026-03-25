@@ -5,10 +5,12 @@ import {
   getRecommendations,
   getTrending,
   discoverMovies,
+  resolveGenre,
+  GENRE_NAMES,
 } from "./tmdb";
 import { getOmdbRatings } from "./omdb";
 import { formatMovieList, formatDetails } from "./format";
-import { resultsCard, detailsCard } from "./cards";
+import { resultsCard, detailsCard, genreCard } from "./cards";
 
 export type PostFn = (
   msg: string | PostableMessage | ChatElement,
@@ -19,6 +21,7 @@ export const HELP_TEXT = `🎬 Here's what I can do:
 🔍 */search <title>* — Search for a movie
 🔥 */trending* — See what's trending this week
 🏆 */best <year>* — Top rated movies from a year
+🎭 */genre <name>* — Browse by genre or sub-genre
 📖 */details <id>* — Get full movie details
 🎯 */recommend <id>* — Get similar movies
 ❓ */help* — Show this message
@@ -109,12 +112,62 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
   const bestMatch = trimmed.match(/^\/best\s+(\d{4})$/i);
   if (bestMatch) {
     const year = Number(bestMatch[1]);
-    const movies = await discoverMovies(year);
+    const movies = await discoverMovies({ year });
     if (movies.length === 0) {
       await post(`No top-rated movies found for ${year}.`);
       return;
     }
     await post(`🏆 *Best of ${year}*\n\n${formatMovieList(movies)}`);
+    await post({
+      card: resultsCard(movies),
+      fallbackText: "Tap a movie for details",
+    });
+    return;
+  }
+
+  const genreMatch = trimmed.match(/^\/genre(?:\s+(.+))?$/i);
+  if (genreMatch) {
+    const args = genreMatch[1]?.trim();
+
+    if (!args) {
+      await post(
+        `🎭 *Available Genres*\n\n${GENRE_NAMES.join(", ")}\n\n*Sub-genres:* rom-com, heist, slasher, zombie, superhero\n\nSend */genre <name>* or */genre <name> <year>*`,
+      );
+      await post({ card: genreCard(), fallbackText: "Pick a genre" });
+      return;
+    }
+
+    const parts = args.split(/\s+/);
+    const lastPart = parts[parts.length - 1];
+    const hasYear = /^\d{4}$/.test(lastPart);
+    const genreName = hasYear ? parts.slice(0, -1).join(" ") : args;
+    const year = hasYear ? Number(lastPart) : undefined;
+
+    const match = resolveGenre(genreName);
+    if (!match) {
+      await post(
+        `Unknown genre "${genreName}". Send */genre* to see available genres.`,
+      );
+      return;
+    }
+
+    const options =
+      match.type === "genre"
+        ? { genreId: match.id, year }
+        : { keywordId: match.id, year };
+
+    const movies = await discoverMovies(options);
+    if (movies.length === 0) {
+      const label = year ? `${genreName} (${year})` : genreName;
+      await post(`No movies found for "${label}".`);
+      return;
+    }
+
+    const header = year
+      ? `🎭 *Best ${genreName} movies of ${year}*`
+      : `🎭 *Top ${genreName} movies*`;
+
+    await post(`${header}\n\n${formatMovieList(movies)}`);
     await post({
       card: resultsCard(movies),
       fallbackText: "Tap a movie for details",

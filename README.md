@@ -18,6 +18,7 @@ Built with [Chat SDK](https://chat-sdk.vercel.app), the [Kapso Chat SDK](https:/
 | `/search <title>` | Search for any movie by title          |
 | `/trending`       | See what's trending this week          |
 | `/best <year>`    | Top rated movies from a year           |
+| `/genre <name>`   | Browse by genre or sub-genre           |
 | `/details <id>`   | Full details — cast, director, ratings |
 | `/recommend <id>` | Get similar movie recommendations      |
 | `/help`           | Show available commands                |

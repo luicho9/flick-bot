@@ -77,13 +77,77 @@ export async function getTrending(): Promise<MovieResult[]> {
   return data.results.slice(0, 5);
 }
 
-export async function discoverMovies(year: number): Promise<MovieResult[]> {
+const GENRES: Record<string, number> = {
+  action: 28,
+  adventure: 12,
+  animation: 16,
+  comedy: 35,
+  crime: 80,
+  documentary: 99,
+  drama: 18,
+  family: 10751,
+  fantasy: 14,
+  history: 36,
+  horror: 27,
+  music: 10402,
+  mystery: 9648,
+  romance: 10749,
+  "sci-fi": 878,
+  thriller: 53,
+  war: 10752,
+  western: 37,
+};
+
+const SUBGENRES: Record<string, number> = {
+  "rom-com": 9799,
+  "romcom": 9799,
+  heist: 10051,
+  slasher: 12339,
+  zombie: 12377,
+  superhero: 9715,
+};
+
+export type GenreMatch =
+  | { type: "genre"; id: number; name: string }
+  | { type: "keyword"; id: number; name: string }
+  | null;
+
+export function resolveGenre(input: string): GenreMatch {
+  const key = input.toLowerCase().trim();
+  if (SUBGENRES[key]) {
+    return { type: "keyword", id: SUBGENRES[key], name: input };
+  }
+  if (GENRES[key]) {
+    return { type: "genre", id: GENRES[key], name: input };
+  }
+  return null;
+}
+
+export const GENRE_NAMES = Object.keys(GENRES);
+
+export interface DiscoverOptions {
+  year?: number;
+  genreId?: number;
+  keywordId?: number;
+}
+
+export async function discoverMovies(
+  options: DiscoverOptions,
+): Promise<MovieResult[]> {
   const params = new URLSearchParams({
-    primary_release_year: String(year),
     sort_by: "vote_average.desc",
     "vote_count.gte": "200",
     include_adult: "false",
   });
+  if (options.year) {
+    params.set("primary_release_year", String(options.year));
+  }
+  if (options.genreId) {
+    params.set("with_genres", String(options.genreId));
+  }
+  if (options.keywordId) {
+    params.set("with_keywords", String(options.keywordId));
+  }
   const data = await tmdbGet<{ results: MovieResult[] }>(
     `/discover/movie?${params}`,
   );

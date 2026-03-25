@@ -52,3 +52,16 @@ export function detailsCard(movieId: number) {
     ],
   });
 }
+
+export function genreCard() {
+  return card({
+    title: "Pick a genre",
+    children: [
+      Actions([
+        Button({ id: "cmd", value: "/genre action", label: "💥 Action" }),
+        Button({ id: "cmd", value: "/genre comedy", label: "😂 Comedy" }),
+        Button({ id: "cmd", value: "/genre rom-com", label: "💕 Rom-Com" }),
+      ]),
+    ],
+  });
+}
