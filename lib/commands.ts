@@ -5,6 +5,7 @@ import {
   getRecommendations,
   getTrending,
 } from "./tmdb";
+import { getOmdbRatings } from "./omdb";
 import { formatMovieList, formatDetails } from "./format";
 import { resultsCard, detailsCard } from "./cards";
 
@@ -69,7 +70,10 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
   if (detailsMatch) {
     try {
       const movie = await getMovieDetails(Number(detailsMatch[1]));
-      await post(formatDetails(movie));
+      const omdb = movie.external_ids?.imdb_id
+        ? await getOmdbRatings(movie.external_ids.imdb_id)
+        : null;
+      await post(formatDetails(movie, omdb));
       await post({ card: detailsCard(movie.id), fallbackText: "What next?" });
     } catch {
       await post("Movie not found. Check the ID and try again.");

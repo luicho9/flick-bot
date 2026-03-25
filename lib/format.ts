@@ -1,4 +1,5 @@
 import type { MovieResult, MovieDetails } from "./tmdb";
+import type { OmdbRatings } from "./omdb";
 
 export function stars(rating: number): string {
   return `⭐ ${Math.round(rating * 10) / 10}/10`;
@@ -6,6 +7,21 @@ export function stars(rating: number): string {
 
 export function year(date: string): string {
   return date ? date.split("-")[0] : "TBA";
+}
+
+function formatRatings(
+  tmdbRating: number,
+  tmdbVotes: number,
+  omdb: OmdbRatings | null,
+): string {
+  if (omdb) {
+    const parts: string[] = [];
+    if (omdb.rottenTomatoes) parts.push(`🍅 ${omdb.rottenTomatoes}`);
+    if (omdb.imdb) parts.push(`IMDb ${omdb.imdb}`);
+    if (omdb.metascore) parts.push(`Metacritic ${omdb.metascore}`);
+    if (parts.length > 0) return parts.join(" · ");
+  }
+  return `${stars(tmdbRating)} (${tmdbVotes.toLocaleString()} votes)`;
 }
 
 export function formatMovieList(movies: MovieResult[]): string {
@@ -22,7 +38,10 @@ export function formatMovieList(movies: MovieResult[]): string {
     .join("\n\n");
 }
 
-export function formatDetails(m: MovieDetails): string {
+export function formatDetails(
+  m: MovieDetails,
+  omdb: OmdbRatings | null,
+): string {
   const genres = m.genres.map((g) => g.name).join(", ");
   const director = m.credits?.crew.find((c) => c.job === "Director")?.name;
   const cast = m.credits?.cast
@@ -34,7 +53,7 @@ export function formatDetails(m: MovieDetails): string {
   if (m.tagline) {
     text += `\n_"${m.tagline}"_`;
   }
-  text += `\n\n${stars(m.vote_average)} (${m.vote_count.toLocaleString()} votes)`;
+  text += `\n\n${formatRatings(m.vote_average, m.vote_count, omdb)}`;
   text += `\n🎭 ${genres}`;
   if (m.runtime) {
     text += ` · ⏱ ${m.runtime} min`;

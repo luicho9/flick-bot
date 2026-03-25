@@ -41,6 +41,7 @@ cp .env.example .env
 | ----------------------- | -------------------------------------------------------------- |
 | `TMDB_API_ACCESS_TOKEN` | [TMDB Settings → API](https://www.themoviedb.org/settings/api) |
 | `TMDB_API_KEY`          | Same page as above                                             |
+| `OMDB_API_KEY`          | [OMDb API](http://www.omdbapi.com/apikey.aspx) (optional — enables RT, IMDb, Metacritic scores) |
 | `KAPSO_API_KEY`         | [Kapso Dashboard](https://kapso.ai)                            |
 | `KAPSO_PHONE_NUMBER_ID` | Kapso Dashboard → Connected numbers                            |
 | `KAPSO_WEBHOOK_SECRET`  | Kapso Dashboard → Webhooks                                     |

@@ -37,6 +37,9 @@ export interface MovieDetails {
     cast: { name: string; character: string; order: number }[];
     crew: { name: string; job: string }[];
   };
+  external_ids?: {
+    imdb_id: string | null;
+  };
 }
 
 async function tmdbGet<T>(path: string): Promise<T> {
@@ -55,7 +58,9 @@ export async function searchMovies(query: string): Promise<MovieResult[]> {
 }
 
 export async function getMovieDetails(id: number): Promise<MovieDetails> {
-  return tmdbGet<MovieDetails>(`/movie/${id}?append_to_response=credits`);
+  return tmdbGet<MovieDetails>(
+    `/movie/${id}?append_to_response=credits,external_ids`,
+  );
 }
 
 export async function getRecommendations(id: number): Promise<MovieResult[]> {
