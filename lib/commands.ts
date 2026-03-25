@@ -61,7 +61,7 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
     const query = searchMatch[1];
     const movies = await searchMovies(query);
     if (movies.length === 0) {
-      await post(`No results found for "${query}". Try a different title!`);
+      await post(`No results for "${query}".`);
       return;
     }
     await post(`🔍 *Results for "${query}"*\n\n${formatMovieList(movies)}`);
@@ -85,7 +85,7 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
       await post(formatDetails(movie, omdb, wp));
       await post({ card: detailsCard(movie.id), fallbackText: "What next?" });
     } catch {
-      await post("Movie not found. Check the ID and try again.");
+      await post("Movie not found.");
     }
     return;
   }
@@ -108,7 +108,7 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
         fallbackText: "Tap a movie for details",
       });
     } catch {
-      await post("Movie not found. Check the ID and try again.");
+      await post("Movie not found.");
     }
     return;
   }
@@ -135,7 +135,7 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
 
     if (!args) {
       await post(
-        `🎭 *Available Genres*\n\n${GENRE_NAMES.join(", ")}\n\n*Sub-genres:* rom-com, heist, slasher, zombie, superhero\n\nSend */genre <name>* or */genre <name> <year>*`,
+        `🎭 *Available Genres*\n\n${GENRE_NAMES.join(", ")}\n\n*Sub-genres:* rom-com, heist, slasher, zombie, superhero\n\nUse */genre name* or */genre name year*`,
       );
       await post({ card: genreCard(), fallbackText: "Pick a genre" });
       return;
@@ -150,7 +150,7 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
     const match = resolveGenre(genreName);
     if (!match) {
       await post(
-        `Unknown genre "${genreName}". Send */genre* to see available genres.`,
+        `Unknown genre "${genreName}". Try */genre* for options.`,
       );
       return;
     }
@@ -180,6 +180,6 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
   }
 
   await post(
-    `I didn't understand that. Send */help* to see available commands.`,
+    `Try */help* for commands.`,
   );
 }

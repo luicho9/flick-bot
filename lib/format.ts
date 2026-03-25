@@ -36,7 +36,8 @@ function formatWatchProviders(wp: WatchProviders | null): string {
   if (!wp || wp.stream.length === 0) {
     return "";
   }
-  return `\n\n📺 Stream: ${wp.stream.join(", ")}`;
+  const list = wp.stream.map((s) => `• ${s}`).join("\n");
+  return `\n\n*Available on:*\n${list}`;
 }
 
 export function formatMovieList(movies: MovieResult[]): string {
@@ -47,8 +48,7 @@ export function formatMovieList(movies: MovieResult[]): string {
     .map(
       (m, i) =>
         `*${i + 1}. ${m.title}* (${year(m.release_date)})\n` +
-        `${stars(m.vote_average)} · ${m.overview.slice(0, 100)}${m.overview.length > 100 ? "…" : ""}\n` +
-        `📌 /details ${m.id}`,
+        `${stars(m.vote_average)} · /details ${m.id}`,
     )
     .join("\n\n");
 }
@@ -60,28 +60,30 @@ export function formatDetails(
 ): string {
   const genres = m.genres.map((g) => g.name).join(", ");
   const director = m.credits?.crew.find((c) => c.job === "Director")?.name;
-  const cast = m.credits?.cast
-    .slice(0, 5)
-    .map((c) => c.name)
-    .join(", ");
+  const cast = m.credits?.cast.slice(0, 5);
 
-  let text = `🎬 *${m.title}* (${year(m.release_date)})`;
-  if (m.tagline) {
-    text += `\n_"${m.tagline}"_`;
-  }
-  text += `\n\n${formatRatings(m.vote_average, m.vote_count, omdb)}`;
-  text += `\n🎭 ${genres}`;
+  let text = `*${m.title}* (${year(m.release_date)})`;
+  text += `\n${genres}`;
   if (m.runtime) {
-    text += ` · ⏱ ${m.runtime} min`;
+    text += ` · ${m.runtime} min`;
   }
-  if (director) {
-    text += `\n🎬 Director: ${director}`;
+
+  if (m.tagline) {
+    text += `\n\n_"${m.tagline}"_`;
   }
-  if (cast) {
-    text += `\n🌟 Cast: ${cast}`;
-  }
+
   text += `\n\n${m.overview}`;
+  text += `\n\n${formatRatings(m.vote_average, m.vote_count, omdb)}`;
+
+  if (director) {
+    text += `\n\nDirector: ${director}`;
+  }
+
+  if (cast && cast.length > 0) {
+    const castList = cast.map((c) => `• ${c.name}`).join("\n");
+    text += `\n\n*Cast:*\n${castList}`;
+  }
+
   text += formatWatchProviders(wp);
   return text;
 }
-
