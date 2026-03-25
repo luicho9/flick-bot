@@ -26,7 +26,7 @@ export const HELP_TEXT = `Here's what I can do:
 *details* _id_ - Full info, ratings & streaming
 *recommend* _id_ - Similar movies
 
-Just type naturally, no need for slashes!`;
+No slashes needed, just type a command!`;
 
 export async function handleCommand(text: string, post: PostFn): Promise<void> {
   const trimmed = text.trim();
