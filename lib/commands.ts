@@ -178,8 +178,6 @@ export async function handleCommand(text: string, post: PostFn): Promise<void> {
     return;
   }
 
-  await post(
-    `Not sure what you mean. Try *help* for commands, or *search* followed by a movie title!`,
-  );
+  await post(HELP_TEXT);
 }
 
